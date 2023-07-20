@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MyButton from "./MyButton";
 import { useNavigate } from "react-router-dom";
 import DiaryItem from "./DiaryItem";
@@ -14,7 +14,14 @@ const filterOptionList = [
     { value: "bad", name: "나쁜 감정만" },
 ];
 
-const ControlMenu = ({ value, onChange, optionList }) => {
+/**
+ * 우리 플젝에서 ControlMenu에 넘겨주는 onChange는 전부 useState의 상태변화 함수(set~)이다.
+ * useState가 반환하는 상태변화 함수는 리렌더 되어도 동일한 id를 보장하기 때문에, useCallback처리가 된 상태라고 생각하면 된다.
+ * 만약 useState가 반환하는 상태변화 함수가 아니라,
+ * ()=>{setState(~~)} 를 onChange로 받았다면, 컴포넌트 재생성시에 다시 생성하게 되어, React.memo가 의미가 없게 된다.
+ * 따라서, 굳이 중간에 handler함수를 만들 필요가 없는 경우에는, 그냥 useState의 상태변화 함수를 사용하자.
+ */
+const ControlMenu = React.memo(({ value, onChange, optionList }) => {
     return (
         <select
             className="ControlMenu"
@@ -31,7 +38,7 @@ const ControlMenu = ({ value, onChange, optionList }) => {
             ))}
         </select>
     );
-};
+});
 
 const DiaryList = ({ diaryList }) => {
     const navigate = useNavigate();
